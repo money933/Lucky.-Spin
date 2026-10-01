@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucky Spin</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:Arial,sans-serif;
+  background:#111;
+  color:white;
+}
+
+.box{
+  width:95%;
+  max-width:420px;
+  text-align:center;
+  padding:25px;
+  background:#1d1d1d;
+  border-radius:20px;
+}
+
+h1{margin-top:0}
+
+#wheel{
+  width:300px;
+  height:300px;
+  max-width:80vw;
+  max-height:80vw;
+  border-radius:50%;
+  margin:20px auto;
+  border:8px solid white;
+  background:conic-gradient(
+    #ff5252 0deg 45deg,
+    #ffd740 45deg 90deg,
+    #40c4ff 90deg 135deg,
+    #69f0ae 135deg 180deg,
+    #ff4081 180deg 225deg,
+    #7c4dff 225deg 270deg,
+    #18ffff 270deg 315deg,
+    #ff6d00 315deg 360deg
+  );
+  position:relative;
+  transition:transform 4s cubic-bezier(.15,.8,.2,1);
+}
+
+#wheel span{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  font-size:35px;
+}
+
+.pointer{
+  font-size:35px;
+  margin-bottom:-15px;
+}
+
+button{
+  border:0;
+  border-radius:12px;
+  padding:15px 35px;
+  font-size:18px;
+  font-weight:bold;
+  cursor:pointer;
+  background:#00e676;
+}
+
+button:disabled{
+  opacity:.5;
+}
+
+.result{
+  margin-top:18px;
+  font-size:22px;
+  font-weight:bold;
+}
+
+.score{
+  margin-top:10px;
+  font-size:18px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>Lucky Spin</h1>
+
+<div class="score">
+Points: <b id="score">0</b>
+</div>
+
+<div class="pointer">▼</div>
+
+<div id="wheel">
+<span>★</span>
+</div>
+
+<button id="spinBtn" onclick="spin()">SPIN</button>
+
+<div class="result" id="result">
+Spin करके points जीतें!
+</div>
+
+</div>
+
+<script>
+
+const prizes = [10,20,50,100,25,75,5,200];
+
+let score = Number(localStorage.getItem("score") || 0);
+
+let rotation = 0;
+
+let spinning = false;
+
+document.getElementById("score").textContent = score;
+
+function spin(){
+
+  if(spinning) return;
+
+  spinning = true;
+
+  document.getElementById("spinBtn").disabled = true;
+
+  document.getElementById("result").textContent = "Spinning...";
+
+  const index = Math.floor(Math.random() * prizes.length);
+
+  const slice = 360 / prizes.length;
+
+  const target =
+    360 - (index * slice + slice / 2);
+
+  rotation += 360 * 5 + target;
+
+  document.getElementById("wheel").style.transform =
+    `rotate(${rotation}deg)`;
+
+  setTimeout(() => {
+
+    const prize = prizes[index];
+
+    score += prize;
+
+    localStorage.setItem("score", score);
+
+    document.getElementById("score").textContent = score;
+
+    document.getElementById("result").textContent =
+      `आपको ${prize} Points मिले!`;
+
+    spinning = false;
+
+    document.getElementById("spinBtn").disabled = false;
+
+  },4000);
+}
+
+</script>
+
+</body>
+  </html>
